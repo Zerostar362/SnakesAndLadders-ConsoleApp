@@ -22,9 +22,11 @@ namespace ConssoleApp
             private String color;
             private String name;
 
-            public Player(String PlayerName)
+            public Player(String PlayerName, int PlayerColor)
             {
                 name = PlayerName;
+                String[] Colors = { "Magenta", "Pink", "Red", "Yellow" };
+                color = Colors[PlayerColor];
             }
 
             //public int eject()
@@ -42,15 +44,6 @@ namespace ConssoleApp
             {
                 X = 0;
                 Y = 0;
-            }
-
-            public string SetColor(string[] UsedColors)
-            {
-                Random random = new Random();
-
-                String[] ColorArr = ["Magenta", "Blue", "Green", "Red"];
-
-                return ColorArr[random.Next(0, 3)];
             }
 
             public string getColor()
@@ -126,11 +119,32 @@ namespace ConssoleApp
 
         static void Main(string[] args)
         {
+
+            bool validNumber = false;
+            int NumberOfPlayers = 0;
+
             Console.Title = "Snakes and ladders";
             board GameBoard = new board();
 
-            GameBoard.Render();
-            Console.ReadLine();
+            Console.WriteLine("How many players will play ?");
+            
+            while (validNumber == false)
+            {
+                try
+                {
+                    NumberOfPlayers = Int32.Parse(Console.ReadLine());
+                    validNumber = true;
+                }
+                catch
+                {
+                    Console.WriteLine("Not a valid input");
+                    validNumber = false;
+                }
+            }
+            for(int i = 0; i <= NumberOfPlayers; i++)
+            {
+
+            }
         }
     }
 }
