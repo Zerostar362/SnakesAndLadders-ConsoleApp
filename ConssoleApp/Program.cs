@@ -127,9 +127,13 @@ namespace ConssoleApp
                 Console.WriteLine(" ");
             }
 
-            public int setPlayerTurn()
+            public int setPlayerTurn(object player1, object player2, object player3, object player4)
             {
-                return 0;
+                object[] OArr = { player1, player2, player3, player4 };
+                foreach (object O in OArr)
+                {
+                    if(O.)
+                }
             }
         }
 
@@ -139,6 +143,7 @@ namespace ConssoleApp
             public int Y { get; set; }
             private String color { get; }
             private String name { get; }
+            public bool onTurn { get; set; }
 
             public Player(String PlayerName, int PlayerColor)
             {
