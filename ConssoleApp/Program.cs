@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConssoleApp
 {
@@ -13,6 +9,7 @@ namespace ConssoleApp
         class Game
         {
             private int number;
+            public int RoundNumber;
 
             public bool WinningCondition = false;
 
@@ -21,7 +18,7 @@ namespace ConssoleApp
 
             }
 
-            public void CreatePlayers(int Count,out object player1,out object player2, out object player3, out object player4)
+            public void CreatePlayers(int Count, out Player player1, out Player player2, out Player player3, out Player player4)
             {
                 player1 = null;
                 player2 = null;
@@ -37,28 +34,28 @@ namespace ConssoleApp
                         case 0:
                             {
                                 Console.WriteLine("Choose player name");
-                                Player playerOne = new Player(Console.ReadLine(), i);
+                                Player playerOne = new Player(Console.ReadLine(), i, i);
                                 player1 = playerOne;
                                 break;
                             }
                         case 1:
                             {
                                 Console.WriteLine("Choose player name");
-                                Player playerTwo = new Player(Console.ReadLine(), i);
+                                Player playerTwo = new Player(Console.ReadLine(), i, i);
                                 player2 = playerTwo;
                                 break;
                             }
                         case 2:
                             {
                                 Console.WriteLine("Choose player name");
-                                Player playerThree = new Player(Console.ReadLine(), i);
+                                Player playerThree = new Player(Console.ReadLine(), i, i);
                                 player3 = playerThree;
                                 break;
                             }
                         case 3:
                             {
                                 Console.WriteLine("Choose player name");
-                                Player playerFour = new Player(Console.ReadLine(), i);
+                                Player playerFour = new Player(Console.ReadLine(), i, i);
                                 player4 = playerFour;
                                 break;
                             }
@@ -127,12 +124,82 @@ namespace ConssoleApp
                 Console.WriteLine(" ");
             }
 
-            public int setPlayerTurn(object player1, object player2, object player3, object player4)
+            public void setPlayerTurn(Player player1, Player player2, Player player3, Player player4, Game game)  //writes Turn directly into objects
             {
-                object[] OArr = { player1, player2, player3, player4 };
-                foreach (object O in OArr)
+
+                int ID = 0;
+
+                Player[] OArr = { player1, player2, player3, player4 };
+                foreach (Player O in OArr)
                 {
-                    if(O.)
+                    if (game.RoundNumber == 1)
+                    {
+                        ID = 1;
+                    }
+                    else
+                    {
+                        if (O.onTurn == true)
+                        {
+
+                            if (O.playerID + 1 > 4)
+                            {
+                                ID = 1;
+                            }
+                            else
+                            {
+                                ID = O.playerID + 1;
+                            }
+                        }
+                    }
+                }
+
+                switch (ID)
+                {
+                    case 1:
+                        {
+                            Console.WriteLine(player1.name + " is on turn");
+                            player1.onTurn = true;
+                            player2.onTurn = false;
+                            player3.onTurn = false;
+                            player4.onTurn = false;
+                            break;
+                        }
+                    case 2:
+                        {
+                            Console.WriteLine(player2.name + " is on turn");
+                            player1.onTurn = false;
+                            player2.onTurn = true;
+                            player3.onTurn = false;
+                            player4.onTurn = false;
+                            break;
+                        }
+                    case 3:
+                        {
+                            Console.WriteLine(player3.name + " is on turn");
+                            player1.onTurn = false;
+                            player2.onTurn = false;
+                            player3.onTurn = true;
+                            player4.onTurn = false;
+                            break;
+                        }
+                    case 4:
+                        {
+                            Console.WriteLine(player4.name + " is on turn");
+                            player1.onTurn = true;
+                            player2.onTurn = false;
+                            player3.onTurn = false;
+                            player4.onTurn = false;
+                            break;
+                        }
+                    default:
+                        {
+                            Console.WriteLine("Error, no player on turn");
+                            player1.onTurn = false;
+                            player2.onTurn = false;
+                            player3.onTurn = false;
+                            player4.onTurn = false;
+                            break;
+                        }
                 }
             }
         }
@@ -141,12 +208,15 @@ namespace ConssoleApp
         {
             public int X { get; set; }
             public int Y { get; set; }
-            private String color { get; }
-            private String name { get; }
+            public String color { get; set; }
+            public String name { get; set; }
+            public int playerID { get; set; }
             public bool onTurn { get; set; }
+            public bool won { get; set; }
 
-            public Player(String PlayerName, int PlayerColor)
+            public Player(String PlayerName, int PlayerColor, int ID)
             {
+                playerID = ID;
                 name = PlayerName;
                 String[] Colors = { "Magenta", "Pink", "Red", "Yellow" };
                 color = Colors[PlayerColor];
@@ -156,12 +226,6 @@ namespace ConssoleApp
             //{ 
             //return
             //}
-
-            public void getPlayerPosition(out int posX, out int posY)
-            {
-                posX = X;
-                posY = Y;
-            }
 
             public void setStartingPosition()
             {
@@ -174,10 +238,12 @@ namespace ConssoleApp
                 //algorithm completed, should work
                 board GameBoard = new board();
 
+                Console.WriteLine(movementValue);
+
                 GameBoard.getSize(out int maximumX, out int maximumY);
 
                 Won = false;
-                if (X + movementValue > maximumX) 
+                if (X + movementValue > maximumX)
                 {
                     X = +movementValue;
                     X = -maximumX;
@@ -205,10 +271,10 @@ namespace ConssoleApp
             public void Render()
             {
                 //need to implement render of player position
-                for(int i = 0; i < Ymax; i++)
+                for (int i = 0; i < Ymax; i++)
                 {
                     Console.WriteLine();
-                    for(int o = 0; o < Xmax; o++)
+                    for (int o = 0; o < Xmax; o++)
                     {
                         Console.Write("O");
                         Console.Write(" ");
@@ -238,6 +304,9 @@ namespace ConssoleApp
         static void Main(string[] args)
         {
 
+            int TurnPlayerID = 0;
+            Player playerOnTurn = null;
+
             Console.Title = "Snakes and ladders";
             board GameBoard = new board();
             Game General = new Game();
@@ -245,15 +314,40 @@ namespace ConssoleApp
 
             //this block creates all wanted player objects-----------------------------------------
             Console.WriteLine("How many players will play ?");
-                General.CreatePlayers(General.CheckValidInt(Console.ReadLine()), out object playerOne, out object playerTwo, out object playerThree, out object playerFour);
+            General.CreatePlayers(General.CheckValidInt(Console.ReadLine()), out Player playerOne, out Player playerTwo, out Player playerThree, out Player playerFour);
             //-------------------------------------------------------------------------------------
 
-            while(General.WinningCondition == false)
+            Player[] PArr = { playerOne, playerTwo, playerThree, playerFour };
+
+            while (General.WinningCondition == false)
             {
                 General.ClearConsole();
                 General.OverHead();
                 GameBoard.Render();
                 General.Footer();
+                General.setPlayerTurn(playerOne, playerTwo, playerThree, playerFour, General);
+
+                foreach (Player player in PArr)
+                {
+                    if (player.onTurn == true)
+                    {
+                        TurnPlayerID = player.playerID;
+                        playerOnTurn = player;
+                        break;
+                    }
+                }
+
+                Console.WriteLine(" ");
+                Console.WriteLine("Roll the dice!");
+                Console.ReadLine();
+                playerOnTurn.movePlayer(dice.Throw(),out bool Won);
+
+                if(Won == true)
+                {
+                    playerOnTurn.won = true;
+                    General.WinningCondition = true;
+                }
+
                 Console.ReadLine();
             }
         }
