@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ConssoleApp
 {
@@ -124,30 +125,41 @@ namespace ConssoleApp
                 Console.WriteLine(" ");
             }
 
-            public void setPlayerTurn(Player player1, Player player2, Player player3, Player player4, Game game)  //writes Turn directly into objects
+            public void setPlayerTurn(List<Player> OArr, Game game)  //writes Turn directly into objects
             {
 
                 int ID = 0;
+                int NumberOfPlayers = 0;
 
-                Player[] OArr = { player1, player2, player3, player4 };
+                foreach(Player i in OArr)
+                {
+                    if (i.playerID != 0)
+                    {
+                        NumberOfPlayers++;
+                    }
+                }
+
                 foreach (Player O in OArr)
                 {
-                    if (game.RoundNumber == 1)
+                    if (O.playerID != 0)
                     {
-                        ID = 1;
-                    }
-                    else
-                    {
-                        if (O.onTurn == true)
+                        if (game.RoundNumber == 1)
                         {
+                            ID = 1;
+                        }
+                        else
+                        {
+                            if (O.onTurn == true)
+                            {
 
-                            if (O.playerID + 1 > 4)
-                            {
-                                ID = 1;
-                            }
-                            else
-                            {
-                                ID = O.playerID + 1;
+                                if (O.playerID + 1 > NumberOfPlayers)
+                                {
+                                    ID = 1;
+                                }
+                                else
+                                {
+                                    ID = O.playerID + 1;
+                                }
                             }
                         }
                     }
@@ -157,49 +169,111 @@ namespace ConssoleApp
                 {
                     case 1:
                         {
-                            Console.WriteLine(player1.name + " is on turn");
-                            player1.onTurn = true;
-                            player2.onTurn = false;
-                            player3.onTurn = false;
-                            player4.onTurn = false;
+                            Console.WriteLine(OArr[0].name + " is on turn");
+                            OArr[0].onTurn = true; 
+                            OArr[1].onTurn = false;
+                            OArr[2].onTurn = false;
+                            OArr[3].onTurn = false;
                             break;
                         }
                     case 2:
                         {
-                            Console.WriteLine(player2.name + " is on turn");
-                            player1.onTurn = false;
-                            player2.onTurn = true;
-                            player3.onTurn = false;
-                            player4.onTurn = false;
+                            Console.WriteLine(OArr[1].name + " is on turn");
+                            OArr[0].onTurn = false;
+                            OArr[1].onTurn = true;
+                            OArr[2].onTurn = false;
+                            OArr[3].onTurn = false;
                             break;
                         }
                     case 3:
                         {
-                            Console.WriteLine(player3.name + " is on turn");
-                            player1.onTurn = false;
-                            player2.onTurn = false;
-                            player3.onTurn = true;
-                            player4.onTurn = false;
+                            Console.WriteLine(OArr[2].name + " is on turn");
+                            OArr[0].onTurn = false;
+                            OArr[1].onTurn = false;
+                            OArr[2].onTurn = true;
+                            OArr[3].onTurn = false;
                             break;
                         }
                     case 4:
                         {
-                            Console.WriteLine(player4.name + " is on turn");
-                            player1.onTurn = true;
-                            player2.onTurn = false;
-                            player3.onTurn = false;
-                            player4.onTurn = false;
+                            Console.WriteLine(OArr[3].name + " is on turn");
+                            OArr[0].onTurn = true;
+                            OArr[1].onTurn = false;
+                            OArr[2].onTurn = false;
+                            OArr[3].onTurn = false;
                             break;
                         }
                     default:
                         {
                             Console.WriteLine("Error, no player on turn");
-                            player1.onTurn = false;
-                            player2.onTurn = false;
-                            player3.onTurn = false;
-                            player4.onTurn = false;
+                            OArr[0].onTurn = false;
+                            OArr[1].onTurn = false;
+                            OArr[2].onTurn = false;
+                            OArr[3].onTurn = false;
                             break;
                         }
+                }
+            }
+            
+            public void EmptyPlayerCreation(Player playerOne,Player playerTwo,Player playerThree,Player playerFour, List<Player> Array)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            {
+                                if (playerOne != null)
+                                {
+                                    Array.Add(playerOne);
+                                }
+                                else
+                                {
+                                    Player player1 = new Player("NULL", 0, 0);
+                                    Array.Add(player1);
+                                }
+                                break;
+                            }
+                        case 1:
+                            {
+                                if (playerTwo != null)
+                                {
+                                    Array.Add(playerTwo);
+                                }
+                                else
+                                {
+                                    Player player2 = new Player("NULL", 0, 0);
+                                    Array.Add(player2);
+                                }
+                                break;
+                            }
+                        case 2:
+                            {
+                                if (playerThree != null)
+                                {
+                                    Array.Add(playerThree);
+                                }
+                                else
+                                {
+                                    Player player3 = new Player("NULL", 0, 0);
+                                    Array.Add(player3);
+                                }
+                                break;
+                            }
+                        case 3:
+                            {
+                                if (playerFour != null)
+                                {
+                                    Array.Add(playerOne);
+                                }
+                                else
+                                {
+                                    Player player4 = new Player("NULL", 0, 0);
+                                    Array.Add(player4);
+                                }
+                                break;
+                            }
+                    }
                 }
             }
         }
@@ -208,8 +282,8 @@ namespace ConssoleApp
         {
             public int X { get; set; }
             public int Y { get; set; }
-            public String color { get; set; }
-            public String name { get; set; }
+            public ConsoleColor color { get; }
+            public String name { get; }
             public int playerID { get; set; }
             public bool onTurn { get; set; }
             public bool won { get; set; }
@@ -218,14 +292,14 @@ namespace ConssoleApp
             {
                 playerID = ID;
                 name = PlayerName;
-                String[] Colors = { "Magenta", "Pink", "Red", "Yellow" };
+                ConsoleColor[] Colors = { ConsoleColor.Magenta, ConsoleColor.Cyan, ConsoleColor.Red, ConsoleColor.Yellow };
                 color = Colors[PlayerColor];
             }
 
-            //public int eject()
-            //{ 
-            //return
-            //}
+            public void eject()
+            {
+                X = 0;
+            }
 
             public void setStartingPosition()
             {
@@ -233,14 +307,13 @@ namespace ConssoleApp
                 Y = 0;
             }
 
-            public void movePlayer(int movementValue, out bool Won)
+            public void movePlayer(int movementValue, out bool Won, board Board, List<Player> PArr)
             {
                 //algorithm completed, should work
-                board GameBoard = new board();
 
                 Console.WriteLine(movementValue);
 
-                GameBoard.getSize(out int maximumX, out int maximumY);
+                Board.getSize(out int maximumX,out int maximumY);
 
                 Won = false;
                 if (X + movementValue > maximumX)
@@ -260,24 +333,92 @@ namespace ConssoleApp
                 {
                     X = +movementValue;
                 }
+
+                foreach(Player o in PArr)
+                {
+                    if(playerID != o.playerID)
+                    {
+                        if (X == o.X)
+                        {
+                            if (Y == o.Y)
+                            {
+                                o.eject();
+                            }
+                        }
+                    }
+                }
             }
         }
 
         class board
         {
-            private int Xmax = 10;
-            private int Ymax = 10;
+            private String[,] GameBoard;
+            private int Ymax;
+            private int Xmax;
 
-            public void Render()
+            public board(int x, int y)
             {
+                GameBoard = new string[x,y];
+                Ymax = y;
+                Xmax = x;
+            }
+
+            public void RenderPreparations(List<Player> PArr)
+            {
+                for (int y = 0; y < Ymax; y++)
+                {
+                    for (int x = 0; x < Xmax; x++)
+                    {
+                        foreach(Player o in PArr)
+                        { 
+                            foreach(Player z in PArr)
+                            {
+                                if (z.playerID != 0)
+                                {
+                                    if (GameBoard[o.X, o.Y] == GameBoard[z.X, z.Y])
+                                    {
+                                        z.X++;
+                                    }
+                                    else
+                                    {
+                                        GameBoard[o.X, o.Y] = "X";
+                                    }
+                            }   }
+                        }
+                    }
+                }
+            }
+
+            public void Render(List<Player> PArr)
+            {
+
+                RenderPreparations(PArr);
                 //need to implement render of player position
-                for (int i = 0; i < Ymax; i++)
+                for (int y = 0; y < Ymax; y++)
                 {
                     Console.WriteLine();
-                    for (int o = 0; o < Xmax; o++)
+                    for (int x = 0; x < Xmax; x++) 
                     {
-                        Console.Write("O");
-                        Console.Write(" ");
+                        if (GameBoard[x, y] == "X")
+                        {
+                            foreach (Player o in PArr)
+                            {
+                                if (o.X == x)
+                                {
+                                    if (o.Y == y)
+                                    {
+                                        Console.ForegroundColor = o.color;
+                                        Console.Write("X");
+                                        Console.Write(" ");
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.Write("O");
+                            Console.Write(" ");
+                        }
                     }
                 }
             }
@@ -308,7 +449,7 @@ namespace ConssoleApp
             Player playerOnTurn = null;
 
             Console.Title = "Snakes and ladders";
-            board GameBoard = new board();
+            board GameBoard = new board(10,10);
             Game General = new Game();
             Dice dice = new Dice();
 
@@ -317,17 +458,29 @@ namespace ConssoleApp
             General.CreatePlayers(General.CheckValidInt(Console.ReadLine()), out Player playerOne, out Player playerTwo, out Player playerThree, out Player playerFour);
             //-------------------------------------------------------------------------------------
 
-            Player[] PArr = { playerOne, playerTwo, playerThree, playerFour };
+            List <Player> PArr = new List<Player>(); //essential list of usable objects
 
-            while (General.WinningCondition == false)
+            General.EmptyPlayerCreation(playerOne, playerTwo, playerThree, playerFour, PArr); //this method takes care of empty object in case of less players playing
+
+            foreach(Player o in PArr)
             {
+                o.setStartingPosition(); //sets the 0,0 starting position for each player
+            }
+
+            //gameloop starts herere -------------------------------------------------------------------------------
+            while (General.WinningCondition == false) 
+            {
+
+                //-------basic graphic starts here ------//
                 General.ClearConsole();
                 General.OverHead();
-                GameBoard.Render();
+                GameBoard.Render(PArr); //this method renders board and players
                 General.Footer();
-                General.setPlayerTurn(playerOne, playerTwo, playerThree, playerFour, General);
+                //-------basic graphic ends here -----//
 
-                foreach (Player player in PArr)
+                General.setPlayerTurn(PArr, General);
+
+                foreach (Player player in PArr)  //search for parameter Player.OnTurn == true using List<Player> PArr
                 {
                     if (player.onTurn == true)
                     {
@@ -340,12 +493,12 @@ namespace ConssoleApp
                 Console.WriteLine(" ");
                 Console.WriteLine("Roll the dice!");
                 Console.ReadLine();
-                playerOnTurn.movePlayer(dice.Throw(),out bool Won);
+                playerOnTurn.movePlayer(dice.Throw(),out bool Won, GameBoard, PArr );  //calculates the player movement and save it to player object
 
                 if(Won == true)
                 {
                     playerOnTurn.won = true;
-                    General.WinningCondition = true;
+                    General.WinningCondition = true; //checks if anybody finished the game
                 }
 
                 Console.ReadLine();
