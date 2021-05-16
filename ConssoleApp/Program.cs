@@ -35,28 +35,28 @@ namespace ConssoleApp
                         case 0:
                             {
                                 Console.WriteLine("Choose player name");
-                                Player playerOne = new Player(Console.ReadLine(), i, i);
+                                Player playerOne = new Player(Console.ReadLine(), i, i + 1);
                                 player1 = playerOne;
                                 break;
                             }
                         case 1:
                             {
                                 Console.WriteLine("Choose player name");
-                                Player playerTwo = new Player(Console.ReadLine(), i, i);
+                                Player playerTwo = new Player(Console.ReadLine(), i, i + 1);
                                 player2 = playerTwo;
                                 break;
                             }
                         case 2:
                             {
                                 Console.WriteLine("Choose player name");
-                                Player playerThree = new Player(Console.ReadLine(), i, i);
+                                Player playerThree = new Player(Console.ReadLine(), i, i + 1);
                                 player3 = playerThree;
                                 break;
                             }
                         case 3:
                             {
                                 Console.WriteLine("Choose player name");
-                                Player playerFour = new Player(Console.ReadLine(), i, i);
+                                Player playerFour = new Player(Console.ReadLine(), i, i + 1);
                                 player4 = playerFour;
                                 break;
                             }
@@ -143,7 +143,7 @@ namespace ConssoleApp
                 {
                     if (O.playerID != 0)
                     {
-                        if (game.RoundNumber == 1)
+                        if (game.RoundNumber == 0)
                         {
                             ID = 1;
                         }
@@ -174,6 +174,7 @@ namespace ConssoleApp
                             OArr[1].onTurn = false;
                             OArr[2].onTurn = false;
                             OArr[3].onTurn = false;
+                            game.RoundNumber++;
                             break;
                         }
                     case 2:
@@ -183,6 +184,7 @@ namespace ConssoleApp
                             OArr[1].onTurn = true;
                             OArr[2].onTurn = false;
                             OArr[3].onTurn = false;
+                            game.RoundNumber++;
                             break;
                         }
                     case 3:
@@ -192,6 +194,7 @@ namespace ConssoleApp
                             OArr[1].onTurn = false;
                             OArr[2].onTurn = true;
                             OArr[3].onTurn = false;
+                            game.RoundNumber++;
                             break;
                         }
                     case 4:
@@ -201,6 +204,7 @@ namespace ConssoleApp
                             OArr[1].onTurn = false;
                             OArr[2].onTurn = false;
                             OArr[3].onTurn = false;
+                            game.RoundNumber++;
                             break;
                         }
                     default:
@@ -210,6 +214,7 @@ namespace ConssoleApp
                             OArr[1].onTurn = false;
                             OArr[2].onTurn = false;
                             OArr[3].onTurn = false;
+                            game.RoundNumber++;
                             break;
                         }
                 }
@@ -316,27 +321,27 @@ namespace ConssoleApp
                 Board.getSize(out int maximumX,out int maximumY);
 
                 Won = false;
-                if (X + movementValue > maximumX)
+                if ((X + movementValue) > maximumX)
                 {
-                    X = +movementValue;
-                    X = -maximumX;
+                    X += movementValue;
+                    X -= maximumX;
                     if (Y + 1 > maximumY)
                     {
                         Won = true;
                     }
                     else
                     {
-                        Y++;
+                       Y++;
                     }
                 }
                 else
                 {
-                    X = +movementValue;
+                    X += movementValue;
                 }
 
                 foreach(Player o in PArr)
                 {
-                    if(playerID != o.playerID)
+                    if(playerID != o.playerID & playerID != 0)
                     {
                         if (X == o.X)
                         {
@@ -369,24 +374,21 @@ namespace ConssoleApp
                 {
                     for (int x = 0; x < Xmax; x++)
                     {
-                        foreach(Player o in PArr)
-                        { 
-                            foreach(Player z in PArr)
+                        foreach (Player o in PArr)
+                        {
+                            if(x == o.X & y == o.Y & o.playerID != 0)
                             {
-                                if (z.playerID != 0)
-                                {
-                                    if (GameBoard[o.X, o.Y] == GameBoard[z.X, z.Y])
-                                    {
-                                        z.X++;
-                                    }
-                                    else
-                                    {
-                                        GameBoard[o.X, o.Y] = "X";
-                                    }
-                            }   }
-                        }
+                                GameBoard[x, y] = "X";
+                            }
+                        }  
                     }
                 }
+            }
+
+            public void getSize(out int maximumX, out int maximumY)
+            {
+                maximumX = this.Xmax;
+                maximumY = this.Ymax;
             }
 
             public void Render(List<Player> PArr)
@@ -403,13 +405,14 @@ namespace ConssoleApp
                         {
                             foreach (Player o in PArr)
                             {
-                                if (o.X == x)
+                                if (o.X == x & o.playerID != 0)
                                 {
                                     if (o.Y == y)
                                     {
                                         Console.ForegroundColor = o.color;
                                         Console.Write("X");
                                         Console.Write(" ");
+                                        Console.ResetColor();
                                     }
                                 }
                             }
@@ -421,12 +424,6 @@ namespace ConssoleApp
                         }
                     }
                 }
-            }
-
-            public void getSize(out int maximumX, out int maximumY)
-            {
-                maximumX = Xmax;
-                maximumY = Ymax;
             }
         }
 
