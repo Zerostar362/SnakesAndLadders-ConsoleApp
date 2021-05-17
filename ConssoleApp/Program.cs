@@ -281,6 +281,28 @@ namespace ConssoleApp
                     }
                 }
             }
+
+            public void PrintWinner(Player Winner, List<Player> PArr)
+            {
+                int x;
+
+                Console.Clear();
+                Console.WriteLine();
+                char[] charArr = ((Winner.name + " IS A WINNER").ToUpper()).ToCharArray(); 
+                foreach(char ch in charArr)
+                {
+                    Console.Beep();
+                    Console.Write(ch);
+                    Console.Write(" ");
+                }
+
+                Console.WriteLine();
+
+                for (x = 0; x < 4; x++) 
+                {
+                    
+                }
+            }
         }
 
         class Player
@@ -292,6 +314,7 @@ namespace ConssoleApp
             public int playerID { get; set; }
             public bool onTurn { get; set; }
             public bool won { get; set; }
+            public int position {get; set;}
 
             public Player(String PlayerName, int PlayerColor, int ID)
             {
@@ -321,11 +344,11 @@ namespace ConssoleApp
                 Board.getSize(out int maximumX,out int maximumY);
 
                 Won = false;
-                if ((X + movementValue) > maximumX)
+                if ((X + movementValue) > maximumX - 1)
                 {
                     X += movementValue;
                     X -= maximumX;
-                    if (Y + 1 > maximumY)
+                    if (Y + 1 > maximumY - 1)
                     {
                         Won = true;
                     }
@@ -368,19 +391,34 @@ namespace ConssoleApp
                 Xmax = x;
             }
 
+            public void ClearBoard()
+            {
+                for (int y = 0; y < Ymax; y++)
+                {
+                    for (int x = 0; x < Xmax; x++)
+                    {
+                        GameBoard[x, y] = "0";
+                    }
+                }
+            }
+
             public void RenderPreparations(List<Player> PArr)
             {
                 for (int y = 0; y < Ymax; y++)
                 {
                     for (int x = 0; x < Xmax; x++)
                     {
-                        foreach (Player o in PArr)
+                        foreach(Player o in PArr)
                         {
-                            if(x == o.X & y == o.Y & o.playerID != 0)
+                            if (o.X == x & o.Y == y & o.playerID != 0)
                             {
                                 GameBoard[x, y] = "X";
                             }
-                        }  
+                            else if (GameBoard[x,y] != "X")
+                            {
+                                GameBoard[x, y] = "0";
+                            }
+                        }
                     }
                 }
             }
@@ -393,36 +431,24 @@ namespace ConssoleApp
 
             public void Render(List<Player> PArr)
             {
-
+                ClearBoard();
                 RenderPreparations(PArr);
-                //need to implement render of player position
                 for (int y = 0; y < Ymax; y++)
                 {
                     Console.WriteLine();
-                    for (int x = 0; x < Xmax; x++) 
+                    for (int x = 0; x < Xmax; x++)
                     {
-                        if (GameBoard[x, y] == "X")
+                        foreach (Player o in PArr)
                         {
-                            foreach (Player o in PArr)
+                            if (x == o.X & y == o.Y & o.playerID != 0)
                             {
-                                if (o.X == x & o.playerID != 0)
-                                {
-                                    if (o.Y == y)
-                                    {
-                                        Console.ForegroundColor = o.color;
-                                        Console.Write("X");
-                                        Console.Write(" ");
-                                        Console.ResetColor();
-                                    }
-                                }
+                                Console.ForegroundColor = o.color;
                             }
-                        }
-                        else
-                        {
-                            Console.Write("O");
-                            Console.Write(" ");
-                        }
-                    }
+                        } 
+                        Console.Write(GameBoard[x, y]);
+                        Console.Write(" ");
+                        Console.ResetColor();
+                    }    
                 }
             }
         }
@@ -500,6 +526,8 @@ namespace ConssoleApp
 
                 Console.ReadLine();
             }
+
+            General.PrintWinner(playerOnTurn, PArr);
         }
     }
 }
