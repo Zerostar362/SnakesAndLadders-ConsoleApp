@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace ConssoleApp
@@ -14,11 +15,6 @@ namespace ConssoleApp
 
             public bool WinningCondition = false;
 
-            public void SetWinner()
-            {
-
-            }
-
             public void CreatePlayers(int Count, out Player player1, out Player player2, out Player player3, out Player player4)
             {
                 player1 = null;
@@ -26,47 +22,70 @@ namespace ConssoleApp
                 player3 = null;
                 player4 = null;
 
-                for (int i = 0; i <= Count - 1; i++)
-                {
-                    string index = i.ToString();
+                bool CountValue = false;
 
-                    switch (i)
+                while (CountValue == false)
+                {
+                    if (Count > 4 || Count < 1) 
                     {
-                        case 0:
-                            {
-                                Console.WriteLine("Choose player name");
-                                Player playerOne = new Player(Console.ReadLine(), i, i + 1);
-                                player1 = playerOne;
-                                break;
-                            }
-                        case 1:
-                            {
-                                Console.WriteLine("Choose player name");
-                                Player playerTwo = new Player(Console.ReadLine(), i, i + 1);
-                                player2 = playerTwo;
-                                break;
-                            }
-                        case 2:
-                            {
-                                Console.WriteLine("Choose player name");
-                                Player playerThree = new Player(Console.ReadLine(), i, i + 1);
-                                player3 = playerThree;
-                                break;
-                            }
-                        case 3:
-                            {
-                                Console.WriteLine("Choose player name");
-                                Player playerFour = new Player(Console.ReadLine(), i, i + 1);
-                                player4 = playerFour;
-                                break;
-                            }
-                        default:
-                            {
-                                Console.WriteLine("Ooops, Something went wrong");
-                                break;
-                            }
+                        Console.WriteLine("Please enter a number between 1 - 4");
+                        Console.WriteLine("Set number of player");
+                        try
+                        {
+                            Count = Int32.Parse(Console.ReadLine());
+                        }
+                        catch
+                        {
+                            Console.WriteLine("That wasn't a number, try again");
+                        }
+                    }
+                    else
+                    {
+                        CountValue = true;
+                        Console.Clear();
                     }
                 }
+                    for (int i = 0; i <= Count - 1; i++)
+                    {
+                        string index = i.ToString();
+
+                        switch (i)
+                        {
+                            case 0:
+                                {
+                                    Console.WriteLine("Choose player name");
+                                    Player playerOne = new Player(Console.ReadLine(), i, i + 1);
+                                    player1 = playerOne;
+                                    break;
+                                }
+                            case 1:
+                                {
+                                    Console.WriteLine("Choose player name");
+                                    Player playerTwo = new Player(Console.ReadLine(), i, i + 1);
+                                    player2 = playerTwo;
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    Console.WriteLine("Choose player name");
+                                    Player playerThree = new Player(Console.ReadLine(), i, i + 1);
+                                    player3 = playerThree;
+                                    break;
+                                }
+                            case 3:
+                                {
+                                    Console.WriteLine("Choose player name");
+                                    Player playerFour = new Player(Console.ReadLine(), i, i + 1);
+                                    player4 = playerFour;
+                                    break;
+                                }
+                            default:
+                                {
+                                    Console.WriteLine("Ooops, Something went wrong");
+                                    break;
+                                }
+                        }
+                    }
             }
 
             public int CheckValidInt(string PlayerCount)
@@ -200,10 +219,10 @@ namespace ConssoleApp
                     case 4:
                         {
                             Console.WriteLine(OArr[3].name + " is on turn");
-                            OArr[0].onTurn = true;
+                            OArr[0].onTurn = false;
                             OArr[1].onTurn = false;
                             OArr[2].onTurn = false;
-                            OArr[3].onTurn = false;
+                            OArr[3].onTurn = true;
                             game.RoundNumber++;
                             break;
                         }
@@ -269,7 +288,7 @@ namespace ConssoleApp
                             {
                                 if (playerFour != null)
                                 {
-                                    Array.Add(playerOne);
+                                    Array.Add(playerFour);
                                 }
                                 else
                                 {
@@ -282,10 +301,60 @@ namespace ConssoleApp
                 }
             }
 
+            public void SetPlayerScore(List<Player> PArr)
+            {
+                int PosHelper = 0;
+
+                foreach (Player o in PArr)
+                {
+                    foreach (Player i in PArr)
+                    {
+                        if (o.playerID != 0 & i.playerID != 0 & o.playerID != i.playerID)
+                        {
+                            if (o.Y > i.Y)
+                            {
+                                PosHelper++;
+                                
+                            }
+                            else if (o.Y == i.Y)
+                            {
+                                if (o.X > i.X)
+                                {
+                                    PosHelper++;
+                                }
+                            }
+                        }
+                    }
+
+                    switch (PosHelper)
+                    {
+                        case 0:
+                            {
+                                o.position = 4;
+                                break;
+                            }
+                        case 1:
+                            {
+                                o.position = 3;
+                                break;
+                            }
+                        case 2:
+                            {
+                                o.position = 2;
+                                break;
+                            }
+                        case 3:
+                            {
+                                o.position = 1;
+                                break;
+                            }
+                    }
+                    PosHelper = 0;
+                }
+            }
+
             public void PrintWinner(Player Winner, List<Player> PArr)
             {
-                int x;
-
                 Console.Clear();
                 Console.WriteLine();
                 char[] charArr = ((Winner.name + " IS A WINNER").ToUpper()).ToCharArray(); 
@@ -298,10 +367,20 @@ namespace ConssoleApp
 
                 Console.WriteLine();
 
-                for (x = 0; x < 4; x++) 
+                SetPlayerScore(PArr);
+
+                List<Player> SortedList = PArr.OrderBy(x => x.position).ToList();
+
+                int pos = 1;
+                foreach (Player o in SortedList)
                 {
                     
+                    Console.WriteLine(pos + ". " + o.name);
+                    Console.WriteLine(" ");
+                    pos++;
                 }
+
+                Console.ReadLine();
             }
         }
 
@@ -433,7 +512,7 @@ namespace ConssoleApp
             {
                 ClearBoard();
                 RenderPreparations(PArr);
-                for (int y = 0; y < Ymax; y++)
+                for (int y = Ymax - 1; y >= 0; y--)
                 {
                     Console.WriteLine();
                     for (int x = 0; x < Xmax; x++)
@@ -527,6 +606,7 @@ namespace ConssoleApp
                 Console.ReadLine();
             }
 
+            playerOnTurn.position = 1;
             General.PrintWinner(playerOnTurn, PArr);
         }
     }
