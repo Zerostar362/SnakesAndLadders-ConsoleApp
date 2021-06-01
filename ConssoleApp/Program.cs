@@ -384,6 +384,88 @@ namespace ConssoleApp
             }
         }
 
+        class Ladder
+        {
+            public int BeginX;
+            public int BeginY;
+            public int EndY;
+            public int Height;
+            private int LaddersGenerated;
+            private int minSpaceBetween = 4;
+            private int maxLadders = 2;
+            private int maxLadderHeight = 4;
+
+            public void generateLadder(board Board)
+            {
+
+                Random random = new Random();
+                bool isValid = false;
+
+                LaddersGenerated = random.Next(1,maxLadders);
+                for (int i = 0; i < LaddersGenerated; i++)
+                {
+                    while (isValid == false)
+                    {
+                        BeginX = random.Next(2, 8);
+                        BeginY = random.Next(1, 6);
+                        Height = random.Next(2, maxLadderHeight);
+                        int back = 0;
+
+                        for (int o = 0; o <= minSpaceBetween; o++)
+                        {
+                            if (BeginX + o >= 10)
+                            {
+                                
+                            }
+
+                            else if ((Board.GameBoard[BeginX + o, BeginY]) == "H")
+                            {
+                                break;
+                            }
+
+                            else
+                            {
+                                if (o == 4)
+                                {
+                                    for(int z = 0; z <= minSpaceBetween; z++)
+                                    {
+                                        if ((BeginX - z) <= 0)
+                                        {
+                                            isValid = true;
+                                            break;
+                                        }
+
+                                        back = +z;
+
+                                        if((Board.GameBoard[BeginX - back, BeginY]) == "H")
+                                        {
+                                            break;
+                                        }
+
+                                        if(z == 4)
+                                        {
+                                            isValid = true;  
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (isValid == true)
+                    {
+                        Board.GameBoard[BeginX, BeginY] = "H";
+
+                        for (int o = 0; o < Height; o++)
+                        {
+                            Board.GameBoard[BeginX, BeginY + o] = "H";
+                            EndY = BeginY + o;
+                        }
+                    }
+                }
+            }
+        }
+
         class Player
         {
             public int X { get; set; }
@@ -414,6 +496,12 @@ namespace ConssoleApp
                 Y = 0;
             }
 
+            public void OnPlayerLadderStep(Player player)
+            {
+                player.Y = this.EndY;
+                player.X = +1;
+            }
+
             public void movePlayer(int movementValue, out bool Won, board Board, List<Player> PArr)
             {
                 //algorithm completed, should work
@@ -441,6 +529,11 @@ namespace ConssoleApp
                     X += movementValue;
                 }
 
+                if (Board.GameBoard[X,Y] == "H")
+                {
+                    
+                }
+
                 foreach(Player o in PArr)
                 {
                     if(playerID != o.playerID & playerID != 0)
@@ -459,9 +552,9 @@ namespace ConssoleApp
 
         class board
         {
-            private String[,] GameBoard;
-            private int Ymax;
-            private int Xmax;
+            public String[,] GameBoard;
+            public int Ymax;
+            public int Xmax;
 
             public board(int x, int y)
             {
@@ -476,7 +569,15 @@ namespace ConssoleApp
                 {
                     for (int x = 0; x < Xmax; x++)
                     {
-                        GameBoard[x, y] = "0";
+                        if (GameBoard[x, y] == "H")
+                        {
+                            
+                        }
+
+                        else
+                        {
+                            GameBoard[x, y] = "0";
+                        }
                     }
                 }
             }
@@ -491,11 +592,17 @@ namespace ConssoleApp
                         {
                             if (o.X == x & o.Y == y & o.playerID != 0)
                             {
-                                GameBoard[x, y] = "X";
+                                if (GameBoard[x, y] != "H")
+                                {
+                                    GameBoard[x, y] = "X";
+                                }
                             }
-                            else if (GameBoard[x,y] != "X")
+                            else if (GameBoard[x, y] != "X")
                             {
-                                GameBoard[x, y] = "0";
+                                if (GameBoard[x, y] != "H")
+                                {
+                                    GameBoard[x, y] = "0";
+                                }
                             }
                         }
                     }
@@ -554,11 +661,16 @@ namespace ConssoleApp
             board GameBoard = new board(10,10);
             Game General = new Game();
             Dice dice = new Dice();
+            Ladder ladder = new Ladder();
 
             //this block creates all wanted player objects-----------------------------------------
             Console.WriteLine("How many players will play ?");
             General.CreatePlayers(General.CheckValidInt(Console.ReadLine()), out Player playerOne, out Player playerTwo, out Player playerThree, out Player playerFour);
             //-------------------------------------------------------------------------------------
+
+            //------------Ladder Generation------------------
+            ladder.generateLadder(GameBoard);
+            //-----------------------------------------------
 
             List <Player> PArr = new List<Player>(); //essential list of usable objects
 
