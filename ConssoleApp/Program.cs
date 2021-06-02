@@ -395,13 +395,21 @@ namespace ConssoleApp
             private int maxLadders = 2;
             private int maxLadderHeight = 4;
 
-            public void generateLadder(board Board)
+            public int GenerateNumberOfLadders()
+            {
+                Random random = new Random();
+                return random.Next(1,maxLadders);
+            }
+
+            public void generateLadder(board Board, out Ladder ladder)
             {
 
                 Random random = new Random();
+                Ladder objectLadder = new Ladder();
                 bool isValid = false;
 
-                LaddersGenerated = random.Next(1,maxLadders);
+                ladder = objectLadder;
+                //LaddersGenerated = random.Next(1,maxLadders);
                 for (int i = 0; i < LaddersGenerated; i++)
                 {
                     while (isValid == false)
@@ -461,6 +469,15 @@ namespace ConssoleApp
                             Board.GameBoard[BeginX, BeginY + o] = "H";
                             EndY = BeginY + o;
                         }
+
+                        
+
+                        objectLadder.Height = Height;
+                        objectLadder.BeginX = BeginX;
+                        objectLadder.BeginY = BeginY;
+                        objectLadder.EndY = EndY;
+
+                        ladder = objectLadder;
                     }
                 }
             }
@@ -498,7 +515,7 @@ namespace ConssoleApp
 
             public void OnPlayerLadderStep(Player player)
             {
-                player.Y = this.EndY;
+                //player.Y = this.EndY;
                 player.X = +1;
             }
 
@@ -654,7 +671,9 @@ namespace ConssoleApp
         static void Main(string[] args)
         {
 
+            int LaddersToGenerate;
             int TurnPlayerID = 0;
+            int WhileInt = 0;
             Player playerOnTurn = null;
 
             Console.Title = "Snakes and ladders";
@@ -669,7 +688,14 @@ namespace ConssoleApp
             //-------------------------------------------------------------------------------------
 
             //------------Ladder Generation------------------
-            ladder.generateLadder(GameBoard);
+            LaddersToGenerate = ladder.GenerateNumberOfLadders();
+            List <>
+            while (WhileInt <= LaddersToGenerate)
+            {
+                ladder.generateLadder(GameBoard, out ladder);
+                WhileInt++;
+
+            }
             //-----------------------------------------------
 
             List <Player> PArr = new List<Player>(); //essential list of usable objects
