@@ -7,7 +7,6 @@ namespace ConssoleApp
 
     class Program
     {
-
         class Game
         {
             private int number;
@@ -384,13 +383,110 @@ namespace ConssoleApp
             }
         }
 
+        class Snake
+        {
+            public int BeginX;
+            public int BeginY;
+            public int EndY;
+            public int Height;
+            private int minSpaceBetween = 4;
+            private int maxSnakes = 2;
+            private int maxSnakeHeight = 4;
+
+            public int GenerateNumberOfSnakes()
+            {
+                Random random = new Random();
+                return random.Next(1, maxSnakes + 1);
+            }
+
+            public void generateSnakes(board Board)
+            {
+                Random random = new Random();
+                bool isValid = false;
+                bool quickValid = false;
+                int StepCounter = 0;
+
+                while (isValid == false)
+                {
+                    BeginX = random.Next(2, 8);
+                    BeginY = random.Next(1, 6);
+                    Height = random.Next(2, maxSnakeHeight);
+                    int back = 0;
+                    
+
+                    StepCounter = 0;
+                    quickValid = false;
+                    
+                    while (StepCounter < Board.Ymax)
+                    {
+                        if (Board.GameBoard[BeginX, StepCounter] == "H" || Board.GameBoard[BeginX, StepCounter] == "S") quickValid = true;
+                        StepCounter++;
+                    }
+
+                    if (quickValid == true) continue;
+
+                    if (Board.GameBoard[BeginX, BeginY - 1] == "H" || Board.GameBoard[BeginX, BeginY - 1] == "S") continue;
+
+                    for (int o = 0; o <= minSpaceBetween; o++)
+                    {
+                        if (BeginX + o >= 10)
+                        {
+
+                        }
+
+                        else if ((Board.GameBoard[BeginX + o, BeginY]) == "S")
+                        {
+                            break;
+                        }
+
+                        else
+                        {
+                            if (o == 4)
+                            {
+                                for (int z = 0; z <= minSpaceBetween; z++)
+                                {
+                                    if ((BeginX - z) <= 0)
+                                    {
+                                        isValid = true;
+                                        break;
+                                    }
+
+                                    back = +z;
+
+                                    if ((Board.GameBoard[BeginX - back, BeginY]) == "S")
+                                    {
+                                        break;
+                                    }
+
+                                    if (z == 4)
+                                    {
+                                        isValid = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (isValid == true)
+                {
+                    Board.GameBoard[BeginX, BeginY] = "S";
+
+                    for (int o = 0; o < Height; o++)
+                    {
+                        Board.GameBoard[BeginX, BeginY + o] = "S";
+                        EndY = BeginY + o;
+                    }
+                }
+            }
+        }
+
         class Ladder
         {
             public int BeginX;
             public int BeginY;
             public int EndY;
             public int Height;
-            private int LaddersGenerated;
             private int minSpaceBetween = 4;
             private int maxLadders = 2;
             private int maxLadderHeight = 4;
@@ -398,26 +494,25 @@ namespace ConssoleApp
             public int GenerateNumberOfLadders()
             {
                 Random random = new Random();
-                return random.Next(1,maxLadders);
+                return random.Next(1,maxLadders + 1);
             }
 
-            public void generateLadder(board Board, out Ladder ladder)
+            public void generateLadder(board Board)
             {
-
                 Random random = new Random();
-                Ladder objectLadder = new Ladder();
                 bool isValid = false;
-
-                ladder = objectLadder;
+                
                 //LaddersGenerated = random.Next(1,maxLadders);
-                for (int i = 0; i < LaddersGenerated; i++)
-                {
+                //for (int i = 0; i < LaddersGenerated; i++)
+                //{
                     while (isValid == false)
                     {
                         BeginX = random.Next(2, 8);
                         BeginY = random.Next(1, 6);
                         Height = random.Next(2, maxLadderHeight);
                         int back = 0;
+
+                        if (Board.GameBoard[BeginX, BeginY - 1] == "H") continue;
 
                         for (int o = 0; o <= minSpaceBetween; o++)
                         {
@@ -469,17 +564,8 @@ namespace ConssoleApp
                             Board.GameBoard[BeginX, BeginY + o] = "H";
                             EndY = BeginY + o;
                         }
-
-                        
-
-                        objectLadder.Height = Height;
-                        objectLadder.BeginX = BeginX;
-                        objectLadder.BeginY = BeginY;
-                        objectLadder.EndY = EndY;
-
-                        ladder = objectLadder;
                     }
-                }
+               //}
             }
         }
 
@@ -513,12 +599,6 @@ namespace ConssoleApp
                 Y = 0;
             }
 
-            public void OnPlayerLadderStep(Player player)
-            {
-                //player.Y = this.EndY;
-                player.X = +1;
-            }
-
             public void movePlayer(int movementValue, out bool Won, board Board, List<Player> PArr)
             {
                 //algorithm completed, should work
@@ -545,10 +625,53 @@ namespace ConssoleApp
                 {
                     X += movementValue;
                 }
-
+                //step on Ladder
                 if (Board.GameBoard[X,Y] == "H")
                 {
-                    
+                    bool stepValidation = false;
+
+                    if (Board.GameBoard[this.X, this.Y - 1] == "H")
+                    {
+                        stepValidation = true;
+                    }
+
+                    while (stepValidation == false)
+                    {
+                        if (Board.GameBoard[this.X, this.Y + 1] == "H")
+                        {
+                            this.Y++;
+                        }
+
+                        else
+                        {
+                            stepValidation = true;
+                            this.X++;
+                        }
+                    } 
+                }
+                //step on snake
+                if (Board.GameBoard[this.X,this.Y] == "S")
+                {
+                    bool stepValidation = false;
+
+                    if (Board.GameBoard[this.X,this.Y + 1] == "S")
+                    {
+                        stepValidation = true;
+                    }
+
+                    while(stepValidation == false)
+                    {
+                        if (Board.GameBoard[this.X, this.Y - 1] == "S")
+                        {
+                            this.Y--;
+                        }
+
+                        else
+                        {
+                            stepValidation = true;
+                            this.X--;
+                        }
+                    }
                 }
 
                 foreach(Player o in PArr)
@@ -586,7 +709,7 @@ namespace ConssoleApp
                 {
                     for (int x = 0; x < Xmax; x++)
                     {
-                        if (GameBoard[x, y] == "H")
+                        if (GameBoard[x, y] == "H" || GameBoard[x,y] == "S")
                         {
                             
                         }
@@ -609,14 +732,14 @@ namespace ConssoleApp
                         {
                             if (o.X == x & o.Y == y & o.playerID != 0)
                             {
-                                if (GameBoard[x, y] != "H")
+                                if (GameBoard[x, y] != "H" && GameBoard[x, y] != "S")
                                 {
                                     GameBoard[x, y] = "X";
                                 }
                             }
                             else if (GameBoard[x, y] != "X")
                             {
-                                if (GameBoard[x, y] != "H")
+                                if (GameBoard[x, y] != "H" && GameBoard[x, y] != "S")
                                 {
                                     GameBoard[x, y] = "0";
                                 }
@@ -674,6 +797,7 @@ namespace ConssoleApp
             int LaddersToGenerate;
             int TurnPlayerID = 0;
             int WhileInt = 0;
+            int SnakesToGenerate;
             Player playerOnTurn = null;
 
             Console.Title = "Snakes and ladders";
@@ -681,6 +805,7 @@ namespace ConssoleApp
             Game General = new Game();
             Dice dice = new Dice();
             Ladder ladder = new Ladder();
+            Snake snakes = new Snake();
 
             //this block creates all wanted player objects-----------------------------------------
             Console.WriteLine("How many players will play ?");
@@ -689,14 +814,22 @@ namespace ConssoleApp
 
             //------------Ladder Generation------------------
             LaddersToGenerate = ladder.GenerateNumberOfLadders();
-            List <>
-            while (WhileInt <= LaddersToGenerate)
+            while (WhileInt < LaddersToGenerate)
             {
-                ladder.generateLadder(GameBoard, out ladder);
+                ladder.generateLadder(GameBoard);
                 WhileInt++;
-
             }
             //-----------------------------------------------
+
+            //----------Snake Generation------------
+            SnakesToGenerate = snakes.GenerateNumberOfSnakes();
+            WhileInt = 0;
+            while (WhileInt < SnakesToGenerate)
+            {
+                snakes.generateSnakes(GameBoard);
+                WhileInt++;
+            }
+            //--------------------------------------
 
             List <Player> PArr = new List<Player>(); //essential list of usable objects
 
